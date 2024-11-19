@@ -3,7 +3,7 @@
   "info": {
     "title": "Ananas Project API",
     "version": "1.0.0",
-    "description": "API specification for the Ananas Project microservices"
+    "description": "Comprehensive API specification for the Ananas Project microservices"
   },
   "servers": [
     {
@@ -11,20 +11,81 @@
     }
   ],
   "paths": {
-    "/iam": {
+    "/iam/users": {
       "get": {
         "tags": ["IAM"],
-        "summary": "Get user information",
+        "summary": "List users",
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "List of users",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
                 }
               }
             }
+          }
+        }
+      },
+      "post": {
+        "tags": ["IAM"],
+        "summary": "Create user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created"
+          }
+        }
+      }
+    },
+    "/iam/users/{userId}": {
+      "get": {
+        "tags": ["IAM"],
+        "summary": "Get user details",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["IAM"],
+        "summary": "Update user",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated"
           }
         }
       }
@@ -32,20 +93,77 @@
     "/products": {
       "get": {
         "tags": ["Products"],
-        "summary": "Get product catalog",
+        "summary": "List products",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                }
-              }
+            "description": "List of products"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Products"],
+        "summary": "Create product",
+        "responses": {
+          "201": {
+            "description": "Product created"
+          }
+        }
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get product details",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details"
+          }
+        }
+      }
+    },
+    "/products/{productId}/inventory": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get product inventory",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product inventory details"
           }
         }
       }
@@ -53,20 +171,68 @@
     "/orders": {
       "get": {
         "tags": ["Orders"],
-        "summary": "Get orders",
+        "summary": "List orders",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Order"
-                  }
-                }
-              }
+            "description": "List of orders"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Create order",
+        "responses": {
+          "201": {
+            "description": "Order created"
+          }
+        }
+      }
+    },
+    "/orders/{orderId}": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Get order details",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Orders"],
+        "summary": "Update order status",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order updated"
           }
         }
       }
@@ -77,14 +243,48 @@
         "summary": "Process payment",
         "responses": {
           "200": {
-            "description": "Payment processed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Payment"
-                }
-              }
+            "description": "Payment processed"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Payments"],
+        "summary": "List payments",
+        "responses": {
+          "200": {
+            "description": "List of payments"
+          }
+        }
+      }
+    },
+    "/payments/{paymentId}": {
+      "get": {
+        "tags": ["Payments"],
+        "summary": "Get payment details",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment details"
+          }
+        }
+      }
+    },
+    "/payments/refunds": {
+      "post": {
+        "tags": ["Payments"],
+        "summary": "Process refund",
+        "responses": {
+          "200": {
+            "description": "Refund processed"
           }
         }
       }
@@ -95,121 +295,137 @@
         "summary": "Send notification",
         "responses": {
           "200": {
-            "description": "Notification sent successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Notification"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
+            "description": "Notification sent"
           }
         }
       },
-      "Product": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      },
-      "Order": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Product"
-            }
-          },
-          "status": {
-            "type": "string",
-            "enum": ["pending", "processing", "completed", "cancelled"]
-          }
-        }
-      },
-      "Payment": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "orderId": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["pending", "completed", "failed"]
-          }
-        }
-      },
-      "Notification": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": ["email", "sms", "push"]
-          },
-          "content": {
-            "type": "string"
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "List notifications",
+        "responses": {
+          "200": {
+            "description": "List of notifications"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+    "/notifications/templates": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "List notification templates",
+        "responses": {
+          "200": {
+            "description": "List of templates"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Notifications"],
+        "summary": "Create notification template",
+        "responses": {
+          "201": {
+            "description": "Template created"
+          }
+        }
+      }
+    },
+    "/loyalty/points": {
+      "get": {
+        "tags": ["Loyalty"],
+        "summary": "Get user points",
+        "responses": {
+          "200": {
+            "description": "User points details"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Loyalty"],
+        "summary": "Add points",
+        "responses": {
+          "200": {
+            "description": "Points added"
+          }
+        }
+      }
+    },
+    "/loyalty/rewards": {
+      "get": {
+        "tags": ["Loyalty"],
+        "summary": "List available rewards",
+        "responses": {
+          "200": {
+            "description": "List of rewards"
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "Search products",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/search/suggestions": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "Get search suggestions",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search suggestions"
+          }
+        }
+      }
+    },
+    "/content": {
+      "get": {
+        "tags": ["Content"],
+        "summary": "List content",
+        "responses": {
+          "200": {
+            "description": "List of content"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Content"],
+        "summary": "Create content",
+        "responses": {
+          "201": {
+            "description": "Content created"
+          }
+        }
       }
     }
-  },
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ]
+  }
 }
